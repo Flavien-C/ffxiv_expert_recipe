@@ -1,0 +1,15 @@
+fieldset label {
+  display: flex;
+  gap: 2px;
+}
+
+section {
+  display: flex;
+}
+
+ul {
+  border: darkgrey 1px solid;
+  margin: 5px;
+  padding: 1em;
+  gap: 5px;
+}
