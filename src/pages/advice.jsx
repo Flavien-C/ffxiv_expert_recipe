@@ -1,48 +1,74 @@
-export function Advice() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
+import { useState } from "react";
 
-    let buffs = {
-      progDone: event.target.progDone.checked,
-      iqDone: event.target.iqDone.checked,
-      qualDone: event.target.qualDone.checked,
-      innov: Number(event.target.innov.value),
-      gs: Number(event.target.gs.value),
-      obs: event.target.obs.checked,
-      manip: Number(event.target.manip.value),
-      wn: Number(event.target.wn.value),
-      vene: Number(event.target.vene.value),
-      mume: Number(event.target.mume.value),
-      cond: event.target.cond.value,
-      dura: Number(event.target.dura.value),
-    };
-    console.log(buffs);
-  };
+export function Advice() {
+  const [progList, setProg] = useState([]);
+  const [qualList, setQual] = useState([]);
+  const [geneList, setGene] = useState([]);
 
   const virtualDurability = (buffs) => {
     return buffs.dura + 5 * buffs.wn + 5 * buffs.manip;
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    let buffs = {
+      goalProg: event.target.goalProg.checked,
+      goalIq: event.target.goalIq.checked,
+      goalQual: event.target.goalQual.checked,
+
+      cond: event.target.cond.value,
+      dura: Number(event.target.dura.value),
+      cobs: event.target.cobs.checked,
+      hs: event.target.hs.checked,
+
+      mume: Number(event.target.mume.value),
+      vene: Number(event.target.vene.value),
+      manip: Number(event.target.manip.value),
+      wn: Number(event.target.wn.value),
+      obs: event.target.obs.checked,
+      innov: Number(event.target.innov.value),
+      gs: Number(event.target.gs.value),
+    };
+    console.log(buffs);
+    resolve(buffs);
+  };
+
+  const resolve = (buffs) => {
+    let gene = [];
+    let prog = [];
+    let qual = [];
+    let vdur = virtualDurability(buffs);
+
+    setProg(prog);
+    setQual(qual);
+    setGene(gene);
+  };
+
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <fieldset>
+        <fieldset id="goal">
+          <legend>Goal</legend>
+
+          <label>
+            Progress:
+            <input type="checkbox" name="goalProg" />
+          </label>
+
+          <label>
+            Inner Quiet Stack:
+            <input type="checkbox" name="goalIq" />
+          </label>
+
+          <label>
+            Quality:
+            <input type="checkbox" name="goalQual" />
+          </label>
+        </fieldset>
+
+        <fieldset id="status">
           <legend>Status</legend>
-
-          <label>
-            Progress done:
-            <input type="checkbox" name="progDone" />
-          </label>
-
-          <label>
-            Inner Quiet Stack done:
-            <input type="checkbox" name="iqDone" />
-          </label>
-
-          <label>
-            Quality done:
-            <input type="checkbox" name="qualDone" />
-          </label>
 
           <label>
             Condition:
@@ -68,13 +94,36 @@ export function Advice() {
               defaultValue={60}
             />
           </label>
+
+          <label>
+            Careful Observation available:
+            <input type="checkbox" name="cobs" />
+          </label>
+
+          <label>
+            Heart and Soul available:
+            <input type="checkbox" name="hs" />
+          </label>
         </fieldset>
 
-        <fieldset>
+        <fieldset id="buffs">
           <legend>Buffs</legend>
+
           <label>
-            Innovation:
-            <select name="innov">
+            Muscle Memory:
+            <select name="mume">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </label>
+
+          <label>
+            Veneration:
+            <select name="vene">
               <option value="0">0</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -83,23 +132,6 @@ export function Advice() {
               <option value="5">5</option>
               <option value="6">6</option>
             </select>
-          </label>
-
-          <label>
-            Great Stride:
-            <select name="gs">
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </label>
-
-          <label>
-            Observe:
-            <input type="checkbox" name="obs" />
           </label>
 
           <label>
@@ -137,8 +169,13 @@ export function Advice() {
           </label>
 
           <label>
-            Veneration:
-            <select name="vene">
+            Observe:
+            <input type="checkbox" name="obs" />
+          </label>
+
+          <label>
+            Innovation:
+            <select name="innov">
               <option value="0">0</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -150,8 +187,8 @@ export function Advice() {
           </label>
 
           <label>
-            Muscle Memory:
-            <select name="mume">
+            Great Stride:
+            <select name="gs">
               <option value="0">0</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -168,23 +205,23 @@ export function Advice() {
       <section>
         <ul>
           <h1>General</h1>
-          <li>item1</li>
-          <li>...</li>
-          <li>itemN</li>
+          {geneList.map((item) => (
+            <li>{item}</li>
+          ))}
         </ul>
 
         <ul>
           <h1>Progress</h1>
-          <li>item1</li>
-          <li>...</li>
-          <li>itemN</li>
+          {progList.map((item) => (
+            <li>{item}</li>
+          ))}
         </ul>
 
         <ul>
           <h1>IQ Stack / Quality</h1>
-          <li>item1</li>
-          <li>...</li>
-          <li>itemN</li>
+          {qualList.map((item) => (
+            <li>{item}</li>
+          ))}
         </ul>
       </section>
     </>
