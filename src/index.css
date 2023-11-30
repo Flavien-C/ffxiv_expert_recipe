@@ -1,19 +1,12 @@
-form {
-  display: flex;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+select,
+input[type="number"] {
+  @apply bg-slate-600 text-white rounded px-1 mx-1 w-full block;
 }
 
-fieldset label {
-  display: flex;
-  gap: 2px;
-}
-
-section {
-  display: flex;
-}
-
-ul {
-  border: darkgrey 1px solid;
-  margin: 5px;
-  padding: 1em;
-  gap: 5px;
+input[type="checkbox"] {
+  @apply px-1 mx-1;
 }

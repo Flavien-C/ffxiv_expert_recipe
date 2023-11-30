@@ -41,22 +41,22 @@ export function Advice() {
     let vdur = virtualDurability(buffs);
     console.log(vdur);
 
-    //Repair TODO:value dura, vdur | affinate
-    if (buffs.dura <= 10 || vdur < 10) {
+    //Urgent Repair
+    if (
+      (buffs.dura <= 10 && buffs.cond != "sturdy") ||
+      (buffs.dura <= 5 && buffs.cond == "sturdy")
+    ) {
       switch (buffs.cond) {
         case "normal":
           other.push("Master's Mend");
-          other.push("Manipulation");
           break;
 
         case "centered":
           other.push("Master's Mend");
-          other.push("Manipulation");
           break;
 
         case "omen":
           other.push("Master's Mend");
-          other.push("Manipulation");
           break;
 
         case "good":
@@ -65,22 +65,22 @@ export function Advice() {
 
         case "malleable":
           other.push("Master's Mend");
-          other.push("Manipulation");
           break;
 
         case "pliant":
           other.push("Master's Mend");
-          other.push("Manipulation");
           break;
 
         case "primed":
-          other.push("Manipulation");
-          other.push("Master's Mend");
+          if (buffs.manip <= 1) {
+            other.push("Manipulation");
+          } else {
+            other.push("Master's Mend");
+          }
           break;
 
         case "sturdy":
           other.push("Master's Mend");
-          other.push("Manipulation");
           break;
 
         default:
@@ -93,23 +93,11 @@ export function Advice() {
         if (buffs.mume > 0) {
           switch (buffs.cond) {
             case "normal":
-              if (buffs.mume == 5) {
-                prog.push("Veneration");
-              } else {
-                prog.push("Rapid Synthesis");
-              }
-              break;
-
             case "centered":
-              if (buffs.mume == 5) {
-                prog.push("Veneration");
-              } else {
-                prog.push("Rapid Synthesis");
-              }
-              break;
-
             case "omen":
-              if (buffs.mume == 5) {
+            case "malleable":
+            case "sturdy":
+              if (buffs.mume >= 4 && buffs.vene == 0) {
                 prog.push("Veneration");
               } else {
                 prog.push("Rapid Synthesis");
@@ -120,38 +108,21 @@ export function Advice() {
               qual.push("Precise Touch");
               break;
 
-            case "malleable":
-              if (buffs.mume == 5) {
-                prog.push("Veneration");
-              } else {
-                prog.push("Rapid Synthesis");
-              }
-              break;
-
             case "pliant":
-              // TODO
-              if (buffs.mume == 5) {
-                prog.push("Veneration");
-              } else if (buffs.manip == 0) {
+              if (buffs.manip == 0) {
                 other.push("Manipulation");
+              } else if (buffs.mume >= 4 && buffs.vene == 0) {
+                prog.push("Veneration");
               } else {
                 prog.push("Rapid Synthesis");
               }
               break;
 
             case "primed":
-              if (buffs.mume == 5) {
+              if (buffs.mume >= 4 && buffs.vene == 0) {
                 prog.push("Veneration");
               } else if (buffs.manip == 0) {
                 other.push("Manipulation");
-              } else {
-                prog.push("Rapid Synthesis");
-              }
-              break;
-
-            case "sturdy":
-              if (buffs.mume == 5) {
-                prog.push("Veneration");
               } else {
                 prog.push("Rapid Synthesis");
               }
@@ -161,16 +132,28 @@ export function Advice() {
               break;
           }
         }
-        // Prog after opener
+        // Try to Finish Prog
         else {
           switch (buffs.cond) {
             case "normal":
+            case "sturdy":
+              if (buffs.hs) {
+                other.push("Heart and Soul");
+              }
+              if (buffs.cobs) {
+                other.push("Careful Observation");
+              } else {
+                other.push("Observe");
+              }
               break;
 
             case "centered":
+            case "malleable":
+              prog.push("Rapid Synthesis");
               break;
 
             case "omen":
+              // TODO
               break;
 
             case "good":
@@ -178,17 +161,24 @@ export function Advice() {
               prog.push("Intensive Synthesis");
               break;
 
-            case "malleable":
-              prog.push("Rapid Synthesis");
-              break;
-
             case "pliant":
+              if (buffs.dura < 30) {
+                other.push("Master's Mend");
+              }
+              if (buffs.manip <= 1) {
+                other.push("Manipulation");
+              }
+              // TODO
               break;
 
             case "primed":
-              break;
-
-            case "sturdy":
+              if (buffs.manip <= 1) {
+                other.push("Manipulation");
+              }
+              if (buffs.manip >= 5 && buffs.wn == 0) {
+                other.push("Waste Not I");
+              }
+              // TODO
               break;
 
             default:
@@ -196,40 +186,63 @@ export function Advice() {
           }
         }
       }
-    }
 
-    // Quality goal
-    if (buffs.goalQual) {
-      switch (buffs.cond) {
-        case "normal":
-          break;
+      // Quality goal
+      if (buffs.goalQual) {
+        switch (buffs.cond) {
+          case "normal":
+          case "malleable":
+            // TODO
+            break;
 
-        case "centered":
-          break;
+          case "centered":
+            qual.push("Hasty Touch");
+            break;
 
-        case "omen":
-          break;
+          case "omen":
+            if (buffs.innov <= 1) {
+              qual.push("Innovation");
+            }
+            if (buffs.gs == 0) {
+              qual.push("Great Strides");
+            }
+            // TODO
+            break;
 
-        case "good":
-          break;
+          case "good":
+            qual.push("Precise Touch");
+            other.push("Tricks of Trade");
+            break;
 
-        case "malleable":
-          break;
+          case "pliant":
+            if (buffs.dura < 30) {
+              other.push("Master's Mend");
+            }
+            if (buffs.manip <= 1) {
+              other.push("Manipulation");
+            }
+            // TODO
+            break;
 
-        case "pliant":
-          break;
+          case "primed":
+            if (buffs.manip <= 1) {
+              other.push("Manipulation");
+            }
+            if (buffs.innov == 0) {
+              qual.push("Innovation");
+            }
+            // TODO
+            break;
 
-        case "primed":
-          break;
+          case "sturdy":
+            // TODO
+            break;
 
-        case "sturdy":
-          break;
-
-        default:
-          break;
+          default:
+            break;
+        }
       }
     }
-
     setOther(other);
     setProg(prog);
     setQual(qual);
@@ -266,9 +279,15 @@ export function Advice() {
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <fieldset id="goal">
+    <main className="m-2 flex gap-1">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-slate-900 border-2 rounded px-1"
+      >
+        <fieldset
+          id="goal"
+          className="px-2 pb-1 flex flex-col gap-1 justify-items-start border-2 rounded border-slate-600 bg-slate-800"
+        >
           <legend>Goal</legend>
 
           <label>
@@ -282,7 +301,10 @@ export function Advice() {
           </label>
         </fieldset>
 
-        <fieldset id="status">
+        <fieldset
+          id="status"
+          className="px-2 pb-1 flex flex-col gap-1 border-2 rounded border-slate-600 bg-slate-800"
+        >
           <legend>Status</legend>
 
           <label>
@@ -304,7 +326,7 @@ export function Advice() {
             <input
               type="number"
               name="dura"
-              min={0}
+              min={1}
               max={80}
               defaultValue={60}
             />
@@ -321,7 +343,10 @@ export function Advice() {
           </label>
         </fieldset>
 
-        <fieldset id="buffs">
+        <fieldset
+          id="buffs"
+          className="px-2 pb-1 flex flex-col gap-1 border-2 rounded border-slate-600 bg-slate-800"
+        >
           <legend>Buffs</legend>
 
           <label>
@@ -431,31 +456,55 @@ export function Advice() {
           </label>
         </fieldset>
 
-        <input type="submit" value="Submit" />
+        <input
+          type="submit"
+          value="Submit"
+          className="my-2 bg-sky-600 border-2 rounded border-sky-800 w-full"
+        />
       </form>
 
-      <section>
-        <ul>
-          <h1>General</h1>
-          {otherList.map((item) => (
-            <li>{item}</li>
-          ))}
-        </ul>
+      <section className="bg-slate-900 border-2 rounded px-1">
+        <h1 className="col-span-full">Advices</h1>
+        <div className="grid grid-cols-3 gap-2">
+          <section className="border-2 rounded border-slate-600 bg-slate-700">
+            <h1 className="px-1 bg-sky-700">General</h1>
+            <ul className="[&>*:nth-child(odd)]:bg-slate-800 [&>*:nth-child(even)]:bg-slate-700">
+              {otherList.map((item, index) => (
+                <li key={index} className="px-2">
+                  {item}
+                </li>
+              ))}
+              <li className="px-2">Test Heavy Big Name of Doom</li>
+            </ul>
+          </section>
 
-        <ul>
-          <h1>Progress</h1>
-          {progList.map((item) => (
-            <li>{item}</li>
-          ))}
-        </ul>
+          <section className="border-2 rounded border-slate-600 bg-slate-700">
+            <h1 className="px-1 bg-sky-700 ">Progress</h1>
+            <ul className="[&>*:nth-child(odd)]:bg-slate-800 [&>*:nth-child(even)]:bg-slate-700">
+              {progList.map((item, index) => (
+                <li key={index} className="px-2">
+                  {item}
+                </li>
+              ))}
+              <li className="px-2">Test Heavy Big Name of Doom</li>
+              <li className="px-2">Carefull Observation</li>
+              <li className="px-2">Test Heavy Big Name of Doom</li>
+            </ul>
+          </section>
 
-        <ul>
-          <h1>IQ Stack / Quality</h1>
-          {qualList.map((item) => (
-            <li>{item}</li>
-          ))}
-        </ul>
+          <section className="border-2 rounded border-slate-600 bg-slate-700">
+            <h1 className="px-1 bg-sky-700 ">IQ Stack / Quality</h1>
+            <ul className="[&>*:nth-child(odd)]:bg-slate-800 [&>*:nth-child(even)]:bg-slate-700">
+              {qualList.map((item, index) => (
+                <li key={index} className="px-2">
+                  {item}
+                </li>
+              ))}
+              <li className="px-2">Test Heavy Big Name of Doom</li>
+            </ul>
+          </section>
+        </div>
       </section>
-    </>
+    </main>
   );
 }
